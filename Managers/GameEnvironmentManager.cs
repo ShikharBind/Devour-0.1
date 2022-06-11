@@ -43,10 +43,10 @@ public class GameEnvironmentManager : MonoBehaviour
 
     private Transform CreateTransform(Transform template, Transform container, List<Transform> transformList)
     {
-        float templateHeight = 100f;
+        float templateHeight = 108f;
         Transform entryTransform = Instantiate(template, container);
         RectTransform entryRectTransform = entryTransform.GetComponent<RectTransform>();
-        entryRectTransform.anchoredPosition = new Vector2(0, 25 - templateHeight * transformList.Count);
+        entryRectTransform.anchoredPosition = new Vector2(0, - templateHeight * transformList.Count);
         entryTransform.gameObject.SetActive(true);
 
         transformList.Add(entryTransform);

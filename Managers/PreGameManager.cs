@@ -10,7 +10,7 @@ using UnityEngine.SceneManagement;
 public class PreGameManager : MonoBehaviour
 {
     public static event Action OnPreGameStart;
-    public static event Action OnPreGameEnd;    public Transform foodContainer, enemyContainer;
+    public static event Action OnPreGameEnd; public Transform foodContainer, enemyContainer;
     public Transform foodTemplate, enemyTemplate;
     private List<Transform> FoodTransformList, EnemyTransformList;
     private List<ScriptableHero> Heroes;
@@ -23,8 +23,7 @@ public class PreGameManager : MonoBehaviour
     private Dictionary<ScriptableEnemy, int> EnemyDataofLevel;
     [SerializeField] GameObject EatingUI, GameUI;
     [SerializeField] AudioSource Music, EatingAudio;
-
-
+    [SerializeField] private PreGameUI pregameUI;
 
     private void Awake()
     {
@@ -109,20 +108,28 @@ public class PreGameManager : MonoBehaviour
 
     private void CreateFoodData(ScriptableHero Hero, Transform foodTransform)
     {
-        foodTransform.GetComponent<Image>().sprite = Hero.MenuSprite;
+        foodTransform.Find("FoodButton").GetComponent<Image>().sprite = Hero.MenuSprite;
         foodTransform.Find("Food Name").GetComponent<Text>().text = Hero.name;
         foodTransform.Find("Food number").GetComponent<Text>()
             .text = LevelSystem.foodsInPlate[Hero].ToString();
-        foodTransform.GetComponent<Button>().onClick.AddListener(() => { AddFoodToPlate(Hero); });
+        foodTransform.Find("FoodButton").GetComponent<Button>().onClick.AddListener(() =>
+        {
+            pregameUI.ShowFoodCard(Hero);
+        });
+        foodTransform.Find("Add Food").GetComponent<Button>()
+            .onClick.AddListener(() => { AddFoodToPlate(Hero); });
         foodTransform.Find("Remove Food").GetComponent<Button>()
             .onClick.AddListener(() => { RemoveFromPlate(Hero); });
+
+        Debug.Log("foosFataCreated");
     }
 
     private void AddFoodToPlate(ScriptableHero Hero)
     {
-        Transform buttonTransform = EventSystem.current.currentSelectedGameObject.transform;
-        string foodName = buttonTransform.Find("Food Name").GetComponent<Text>().text;
-        Debug.Log(foodName);
+        Debug.Log("add Food to plate");
+        Transform parentTransform = EventSystem.current.currentSelectedGameObject.transform.parent;
+        string foodName = parentTransform.Find("Food Name").GetComponent<Text>().text;
+        Debug.Log(foodName + " added");
 
         //calculating remaining space in plate
         int tempSpace = plateSpace;
@@ -135,10 +142,11 @@ public class PreGameManager : MonoBehaviour
         }
         plateSizeText.text = plateSpace.ToString();
         LevelSystem.foodsInPlate[Hero]++;
-        buttonTransform.Find("Food number").GetComponent<Text>()
+        parentTransform.Find("Food number").GetComponent<Text>()
             .text = LevelSystem.foodsInPlate[Hero].ToString();
 
-        buttonTransform.Find("Remove Food").GetComponent<Button>().interactable = true;
+        parentTransform.Find("Remove Food").GetComponent<Button>()
+            .interactable = true;
 
         //checking if any hero cannot be added anymore
         ShouldAddHeroButtonbeActive(plateSpace);
@@ -149,7 +157,7 @@ public class PreGameManager : MonoBehaviour
     {
         Transform buttonTransform = EventSystem.current.currentSelectedGameObject.transform;
         string foodName = buttonTransform.parent.Find("Food Name").GetComponent<Text>().text;
-        Debug.Log(foodName);
+        Debug.Log(foodName + " removed");
 
         //Checking for food count in plate
         if (LevelSystem.foodsInPlate[Hero] <= 0) return;
@@ -181,11 +189,11 @@ public class PreGameManager : MonoBehaviour
             string name = food.Find("Food Name").GetComponent<Text>().text;
             if (inputPlateSpace >= ResourceSystem.Instance.HeroDictionary[name].calorieValue)
             {
-                food.GetComponent<Button>().interactable = true;
+                food.Find("Add Food").GetComponent<Button>().interactable = true;
             }
             else
             {
-                food.GetComponent<Button>().interactable = false;
+                food.Find("Add Food").GetComponent<Button>().interactable = false;
             }
         }
     }
@@ -251,7 +259,7 @@ public class PreGameManager : MonoBehaviour
     {
         enemyTransform.Find("Enemy name").GetComponent<Text>().text = enemy.name;
         enemyTransform.Find("Enemy count").GetComponent<Text>().text = EnemyDataofLevel[enemy].ToString();
-        enemyTransform.Find("Profile").GetComponent<Animator>().runtimeAnimatorController = 
+        enemyTransform.Find("Profile").GetComponent<Animator>().runtimeAnimatorController =
             enemy.animator;
     }
 

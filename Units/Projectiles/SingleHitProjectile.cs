@@ -20,5 +20,7 @@ public class SingleHitProjectile : ProjectileUnitBase {
             Destroy(gameObject, 0.05f);
         }
     }
+
+
     
 }

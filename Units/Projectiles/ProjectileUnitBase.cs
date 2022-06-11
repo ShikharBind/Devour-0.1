@@ -4,7 +4,7 @@ using UnityEngine;
 
 public abstract class ProjectileUnitBase : UnitBase
 {
-    [SerializeField] private float speed = 8f;
+    [SerializeField] protected float speed = 8f;
     public ScriptableHero Hero;
 
     // Start is called before the first frame update
@@ -27,7 +27,7 @@ public abstract class ProjectileUnitBase : UnitBase
         }
     }
 
-    private void HeroThrustForward(float speed)
+    protected void HeroThrustForward(float speed)
     {
         Rigidbody2D rb = gameObject.GetComponent<Rigidbody2D>();
         Vector2 dir = new Vector2(1,0);

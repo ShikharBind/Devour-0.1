@@ -1,11 +1,12 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
 public class PreGameUI : MonoBehaviour
 {
     [SerializeField]
-    private GameObject InGameUI, GamePauseUI;
+    private GameObject InGameUI, GamePauseUI, FoodCardUI;
 
     [SerializeField]
     private Button PlayButton;
@@ -65,6 +66,26 @@ public class PreGameUI : MonoBehaviour
     //             break;
     //     }
     // }
+
+
+    public void HideFoodCard()
+    {
+        FoodCardUI.SetActive(false);
+    }
+
+    public void ShowFoodCard(ScriptableHero hero)
+    {
+        Transform buttonTransform = EventSystem.current.currentSelectedGameObject.transform;
+        string foodName = buttonTransform.parent.Find("Food Name").GetComponent<Text>().text;
+        Debug.Log(foodName);
+
+        FoodCardUI.transform.Find("Profile").GetComponent<Image>().sprite = hero.MenuSprite;
+        FoodCardUI.transform.Find("Calorie").GetComponent<Text>().text = hero.calorieValue.ToString();
+        FoodCardUI.transform.Find("Damage").GetComponent<Text>().text
+             = hero.BaseStats.AttackPower.ToString();
+        FoodCardUI.transform.Find("MaxShots").GetComponent<Text>().text = hero.maxShots.ToString();
+        FoodCardUI.SetActive(true);
+    }
 
     public void Resume()
     {

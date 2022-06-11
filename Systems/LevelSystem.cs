@@ -5,7 +5,7 @@ using System.Linq;
 
 public class LevelSystem : StaticInstance<LevelSystem>
 {
-    public static int Level = 4;
+    public static int Level = 0;
     public static ScriptableLevel levelData;
     List<ScriptableHero> Heroes;
     public static Dictionary<ScriptableHero,int> foodsInPlate;
